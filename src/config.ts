@@ -22,6 +22,21 @@ export interface Config {
    * The token of the Discord bot user.
    */
   botToken: string
+  /**
+   * Config related to commands.
+   */
+  commands?: {
+    /**
+     * Directory relative to `root` that commands will be loaded from.
+     * @default 'commands'
+     */
+    dir?: string
+    /**
+     * Prefix that a message must have to be considered a command.
+     * @default '!'
+     */
+    prefix?: string
+  }
 }
 
 /**
@@ -32,22 +47,26 @@ export interface Config {
 export async function loadConfig(): Promise<Config> {
   const cwd = process.cwd()
   const configPath = path.resolve(cwd, 'wumpy.config.js')
-  let config: Config = {
-    botToken: ''
-  }
+  let config: Config | undefined
 
   try {
     if (fs.existsSync(configPath)) {
-      const userConfig: Config = await import(configPath)
-      config = {
-        ...config,
-        ...userConfig
-      }
+      config = await import(configPath)
     }
 
-    const env = loadEnv()
-    if (env.WUMPY_BOT_TOKEN) {
-      config.botToken = env.WUMPY_BOT_TOKEN
+    config = {
+      root: process.cwd(),
+      buildDir: '.wumpy',
+      outDir: 'out',
+      botToken: '',
+      ...config
+    }
+
+    if (fs.existsSync(path.join(config.root!, '.env'))) {
+      const env = loadEnv()
+      if (env.WUMPY_BOT_TOKEN) {
+        config.botToken = env.WUMPY_BOT_TOKEN
+      }
     }
 
     // Check any required keys

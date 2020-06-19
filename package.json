@@ -26,15 +26,18 @@
   },
   "homepage": "https://github.com/brattonross/wumpy/tree/master/#readme",
   "scripts": {
-    "build": "tsc"
+    "build": "rollup -c"
   },
   "dependencies": {
+    "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-node-resolve": "^8.0.1",
     "commander": "^5.1.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "fs-extra": "^9.0.1",
+    "hash-sum": "^2.0.0",
     "lodash.template": "^4.5.0",
     "rollup": "^2.16.1",
     "rollup-plugin-node-builtins": "^2.1.2",
@@ -42,10 +45,13 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
+    "@types/hash-sum": "^1.0.0",
     "@types/lodash.template": "^4.5.0",
     "@types/node": "^14.0.13",
     "lerna": "^3.22.1",
     "prettier": "^2.0.5",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-typescript2": "^0.27.1",
     "typescript": "^3.9.5"
   }
 }

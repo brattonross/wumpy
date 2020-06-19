@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "target": "esnext",
     "lib": ["ESNext"],
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
     "declaration": true,

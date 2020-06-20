@@ -26,7 +26,8 @@
   },
   "homepage": "https://github.com/brattonross/wumpy/tree/master/#readme",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "@rollup/plugin-alias": "^3.1.1",

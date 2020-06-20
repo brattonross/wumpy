@@ -41,13 +41,15 @@
     "lodash.template": "^4.5.0",
     "rollup": "^2.16.1",
     "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.4.0"
+    "rollup-plugin-node-globals": "^1.4.0",
+    "semver": "^7.3.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
     "@types/hash-sum": "^1.0.0",
     "@types/lodash.template": "^4.5.0",
     "@types/node": "^14.0.13",
+    "@types/semver": "^7.2.0",
     "lerna": "^3.22.1",
     "prettier": "^2.0.5",
     "rollup-plugin-copy": "^3.3.0",

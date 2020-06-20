@@ -49,9 +49,18 @@ export default async () => {
   try {
     const bundle = await rollup({
       input: appPath,
-      plugins: [commonjs(), nodeResolve(), globals(), builtins(), alias({
-        entries: userCommands.map(c => ({ find: c.name, replacement: c.src }))
-      })],
+      plugins: [
+        commonjs(),
+        nodeResolve(),
+        globals(),
+        builtins(),
+        alias({
+          entries: userCommands.map(c => ({
+            find: c.name,
+            replacement: c.src
+          }))
+        })
+      ],
       external: ['discord.js']
     })
 

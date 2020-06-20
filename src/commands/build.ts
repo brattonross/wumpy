@@ -6,15 +6,15 @@ import globals from 'rollup-plugin-node-globals'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import path from 'path'
 import { rollup } from 'rollup'
-import template from 'lodash.template'
 import { loadConfig } from '../config'
 import { normalizeCommand } from '../command'
+import { compile, readTemplate } from '../template'
 
-export default async () => {
+export async function build() {
   const {
     root = process.cwd(),
-    buildDir = path.join(root, '.wumpy'),
-    outDir = path.join(root, 'out'),
+    buildDir = '.wumpy',
+    outDir = 'out',
     botToken,
     commands = {}
   } = await loadConfig()
@@ -30,21 +30,13 @@ export default async () => {
     return normalizeCommand(commandPath)
   })
 
-  const appTemplate = await fs.readFile(
-    path.resolve(__dirname, './template/main.js'),
-    {
-      encoding: 'utf8'
-    }
-  )
-  const createApp = template(appTemplate, {
-    interpolate: /<%=([\s\S]+?)%>/g
-  })
-  const hydratedApp = createApp({ botToken, userCommands, prefix })
+  const template = await readTemplate()
+  const wumpyApp = compile(template, { botToken, userCommands, prefix })
 
   await fs.emptyDir(buildDir)
 
   const appPath = path.join(buildDir, 'main.js')
-  await fs.writeFile(appPath, hydratedApp)
+  await fs.writeFile(appPath, wumpyApp)
 
   try {
     const bundle = await rollup({

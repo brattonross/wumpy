@@ -5,7 +5,7 @@ program
   .usage('<command> [options]')
 
 program.command('build').action(async () => {
-  const { default: build } = await import('./commands/build')
+  const { build } = await import('./commands/build')
   await build()
 })
 

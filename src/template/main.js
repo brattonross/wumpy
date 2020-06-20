@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 
 (async () => {
   const commands = await Promise.all([
-    <% userCommands.forEach(command => { %>() => import('<%= command.name %>'),
+    <% commands.forEach(command => { %>() => import('<%= command.name %>'),
     <% }) %>
   ])
   

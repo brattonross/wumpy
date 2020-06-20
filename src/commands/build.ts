@@ -17,13 +17,13 @@ export async function build() {
 
   try {
     const commandsDir = path.join(root, dir)
-    const userCommands = await loadCommands(commandsDir)
+    const commands = await loadCommands(commandsDir)
 
     await resolveDependencies({
       'discord.js': '^12.2.0'
     })
     const template = await readTemplate()
-    const wumpyApp = compile(template, { botToken, userCommands, prefix })
+    const wumpyApp = compile(template, { botToken, commands, prefix })
 
     await fs.emptyDir(buildDir)
 
@@ -32,7 +32,7 @@ export async function build() {
 
     await bundle({
       input: appPath,
-      commands: userCommands,
+      commands,
       outDir
     })
   } catch (err) {

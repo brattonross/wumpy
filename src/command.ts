@@ -1,13 +1,29 @@
+import fs from 'fs-extra'
 import hash from 'hash-sum'
 import path from 'path'
 
-export function normalizeCommand(command: string) {
+/**
+ * Reads commands from the given directory.
+ * @param dir The directory from which to load commands.
+ */
+export async function loadCommands(dir: string) {
+  if (!fs.existsSync(dir)) {
+    return []
+  }
+
+  const commands = await fs.readdir(dir)
+  return commands.map(filename =>
+    normalizeCommand({ src: path.join(dir, filename) })
+  )
+}
+
+function normalizeCommand({ src }: { src: string }) {
   return {
-    src: command,
+    src,
     name: `wumpy_command_${path
-      .basename(command)
+      .basename(src)
       .split('.')
       .slice(0, -1)
-      .join('.')}_${hash(command)}`
+      .join('.')}_${hash(src)}`
   }
 }

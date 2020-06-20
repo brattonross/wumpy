@@ -7,7 +7,7 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import path from 'path'
 import { rollup } from 'rollup'
 import { loadConfig } from '../config'
-import { normalizeCommand } from '../command'
+import { loadCommands } from '../command'
 import { compile, readTemplate } from '../template'
 
 export async function build() {
@@ -18,32 +18,23 @@ export async function build() {
     botToken,
     commands = {}
   } = await loadConfig()
-
-  // Resolve any dependencies of the template
-  require('discord.js')
-
   const { dir = 'commands', prefix = '!' } = commands
-  const commandsDir = path.join(root, dir)
-  let commandNames: string[] = []
-
-  if (fs.existsSync(commandsDir)) {
-    commandNames = await fs.readdir(commandsDir)
-  }
-
-  const userCommands = commandNames.map(name => {
-    const commandPath = path.join(commandsDir, name)
-    return normalizeCommand(commandPath)
-  })
-
-  const template = await readTemplate()
-  const wumpyApp = compile(template, { botToken, userCommands, prefix })
-
-  await fs.emptyDir(buildDir)
-
-  const appPath = path.join(buildDir, 'main.js')
-  await fs.writeFile(appPath, wumpyApp)
 
   try {
+    // Resolve any dependencies of the template
+    require('discord.js')
+
+    const commandsDir = path.join(root, dir)
+    const userCommands = await loadCommands(commandsDir)
+
+    const template = await readTemplate()
+    const wumpyApp = compile(template, { botToken, userCommands, prefix })
+
+    await fs.emptyDir(buildDir)
+
+    const appPath = path.join(buildDir, 'main.js')
+    await fs.writeFile(appPath, wumpyApp)
+
     const bundle = await rollup({
       input: appPath,
       plugins: [

@@ -24,7 +24,12 @@ export async function build() {
 
   const { dir = 'commands', prefix = '!' } = commands
   const commandsDir = path.join(root, dir)
-  const commandNames = await fs.readdir(commandsDir)
+  let commandNames: string[] = []
+
+  if (fs.existsSync(commandsDir)) {
+    commandNames = await fs.readdir(commandsDir)
+  }
+
   const userCommands = commandNames.map(name => {
     const commandPath = path.join(commandsDir, name)
     return normalizeCommand(commandPath)

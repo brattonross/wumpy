@@ -1,6 +1,8 @@
 .wumpy
 yarn.lock
 !/yarn.lock
+# debugging commands directory
+/commands
 
 # Logs
 logs

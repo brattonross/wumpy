@@ -19,19 +19,21 @@ export async function bundle({
   commands: Command[]
   outDir: string
 }) {
+  const aliases = commands.map(c => ({
+    find: c.alias,
+    replacement: c.src
+  }))
+
+  console.log('aliases', aliases)
+
   const bundle = await rollup({
     input,
     plugins: [
       commonjs(),
+      alias({ entries: aliases }),
       nodeResolve(),
       globals(),
-      builtins(),
-      alias({
-        entries: commands.map(c => ({
-          find: c.name,
-          replacement: c.src
-        }))
-      })
+      builtins()
     ],
     external: ['discord.js']
   })

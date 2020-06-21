@@ -3,8 +3,9 @@ import hash from 'hash-sum'
 import path from 'path'
 
 export interface Command {
-  src: string
+  alias: string
   name: string
+  src: string
 }
 
 /**
@@ -17,18 +18,26 @@ export async function loadCommands(dir: string) {
   }
 
   const commands = await fs.readdir(dir)
-  return commands.map(filename =>
-    normalizeCommand({ src: path.join(dir, filename) })
-  )
+  return commands.map(filename => {
+    const name = basename(filename)
+    return normalizeCommand({ src: path.join(dir, filename), name })
+  })
 }
 
-function normalizeCommand({ src }: { src: string }): Command {
+function normalizeCommand({
+  src,
+  name
+}: {
+  src: string
+  name: string
+}): Command {
   return {
+    name,
     src,
-    name: `wumpy_command_${path
-      .basename(src)
-      .split('.')
-      .slice(0, -1)
-      .join('.')}_${hash(src)}`
+    alias: `wumpy_command_${basename(src)}_${hash(src)}`
   }
+}
+
+function basename(src: string) {
+  return path.basename(src).split('.').slice(0, -1).join('.')
 }

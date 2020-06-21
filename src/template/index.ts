@@ -3,6 +3,14 @@ import path from 'path'
 import semver from 'semver'
 import _template from 'lodash.template'
 
+export const template = {
+  dependencies: {
+    'discord.js': '^12.2.0'
+  },
+  entry: 'main.js',
+  files: ['main.js', 'commands.js']
+}
+
 /**
  * Compile a wumpy app template.
  */
@@ -13,8 +21,8 @@ export function compile(template: string, context?: Record<string, any>) {
   return compile(context)
 }
 
-export async function readTemplate() {
-  return await fs.readFile(path.resolve(__dirname, './template/main.js'), {
+export async function readTemplate(filename: string) {
+  return await fs.readFile(path.resolve(__dirname, './template', filename), {
     encoding: 'utf8'
   })
 }
@@ -23,9 +31,7 @@ export async function readTemplate() {
  * Resolves each of the template's dependencies and ensures that the required
  * versions are installed.
  */
-export async function resolveDependencies(
-  dependencies: Record<string, string>
-) {
+export async function validateTemplate(dependencies: Record<string, string>) {
   await Promise.all(
     Object.entries(dependencies).map(async ([name, version]) => {
       const pkg = await import(path.join(name, 'package.json'))

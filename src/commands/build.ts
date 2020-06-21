@@ -3,7 +3,7 @@ import path from 'path'
 import { loadConfig } from '../config'
 import { loadCommands } from '../command'
 import { bundle } from '../bundler'
-import { compile, readTemplate, resolveDependencies } from '../template'
+import { compile, readTemplate, validateTemplate, template } from '../template'
 
 export async function build() {
   const {
@@ -19,21 +19,27 @@ export async function build() {
     const commandsDir = path.join(root, dir)
     const commands = await loadCommands(commandsDir)
 
-    await resolveDependencies({
-      'discord.js': '^12.2.0'
-    })
-    const template = await readTemplate()
-    const wumpyApp = compile(template, { botToken, commands, prefix })
-
+    await validateTemplate(template.dependencies)
     await fs.emptyDir(buildDir)
 
-    const appPath = path.join(buildDir, 'main.js')
-    await fs.writeFile(appPath, wumpyApp)
+    await Promise.all(
+      template.files.map(async filename => {
+        const templateContent = await readTemplate(filename)
+        const compiledTemplate = compile(templateContent, {
+          botToken,
+          commands,
+          prefix
+        })
+
+        const buildPath = path.join(buildDir, filename)
+        await fs.writeFile(buildPath, compiledTemplate)
+      })
+    )
 
     await bundle({
-      input: appPath,
+      input: path.join(buildDir, template.entry),
       commands,
-      outDir
+      outDir: path.join(root, outDir)
     })
   } catch (err) {
     console.error('Build failed:', err)

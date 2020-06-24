@@ -24,8 +24,6 @@ export async function bundle({
     replacement: c.src
   }))
 
-  console.log('aliases', aliases)
-
   const bundle = await rollup({
     input,
     plugins: [

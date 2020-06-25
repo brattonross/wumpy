@@ -11,20 +11,25 @@ export const template = {
   files: ['main.js', 'commands.js']
 }
 
-/**
- * Compile a wumpy app template.
- */
-export function compile(template: string, context?: Record<string, any>) {
-  const compile = _template(template, {
-    interpolate: /<%=([\s\S]+?)%>/g
-  })
-  return compile(context)
+export interface BuildArgs {
+  files: string[]
+  context: Record<string, any>
+  dir: string
 }
 
-export async function readTemplate(filename: string) {
-  return await fs.readFile(path.resolve(__dirname, './template', filename), {
-    encoding: 'utf8'
-  })
+/**
+ * Compiles and writes each of the provided template files to disk.
+ */
+export async function writeTemplates({ files, context, dir }: BuildArgs) {
+  return await Promise.all(
+    files.map(async filename => {
+      const templateContent = await readTemplate(filename)
+      const compiledTemplate = compile(templateContent, context)
+
+      const buildPath = path.join(dir, filename)
+      await fs.writeFile(buildPath, compiledTemplate)
+    })
+  )
 }
 
 /**
@@ -46,4 +51,20 @@ export async function validateTemplate(dependencies: Record<string, string>) {
       }
     })
   )
+}
+
+/**
+ * Compile a wumpy app template.
+ */
+function compile(template: string, context?: Record<string, any>) {
+  const compile = _template(template, {
+    interpolate: /<%=([\s\S]+?)%>/g
+  })
+  return compile(context)
+}
+
+async function readTemplate(filename: string) {
+  return await fs.readFile(path.resolve(__dirname, './template', filename), {
+    encoding: 'utf8'
+  })
 }

@@ -3,7 +3,7 @@ import path from 'path'
 import { loadConfig } from '../config'
 import { loadCommands } from '../command'
 import { bundle } from '../bundler'
-import { compile, readTemplate, validateTemplate, template } from '../template'
+import { validateTemplate, template, writeTemplates } from '../template'
 
 export async function build() {
   const {
@@ -22,19 +22,15 @@ export async function build() {
     await validateTemplate(template.dependencies)
     await fs.emptyDir(buildDir)
 
-    await Promise.all(
-      template.files.map(async filename => {
-        const templateContent = await readTemplate(filename)
-        const compiledTemplate = compile(templateContent, {
-          botToken,
-          commands,
-          prefix
-        })
-
-        const buildPath = path.join(buildDir, filename)
-        await fs.writeFile(buildPath, compiledTemplate)
-      })
-    )
+    await writeTemplates({
+      files: template.files,
+      context: {
+        botToken,
+        commands,
+        prefix
+      },
+      dir: buildDir
+    })
 
     await bundle({
       input: path.join(buildDir, template.entry),

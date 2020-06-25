@@ -38,8 +38,11 @@ export async function build() {
 
     await bundle({
       input: path.join(buildDir, template.entry),
-      commands,
-      outDir: path.join(root, outDir)
+      outDir: path.join(root, outDir),
+      aliases: commands.map(c => ({
+        find: c.alias,
+        replacement: c.src
+      }))
     })
   } catch (err) {
     console.error('Build failed:', err)

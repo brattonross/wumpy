@@ -5,25 +5,19 @@ import fs from 'fs-extra'
 import globals from 'rollup-plugin-node-globals'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import { rollup } from 'rollup'
-import { Command } from './command'
+
+export type Alias = { find: string; replacement: string }
+
+export interface BundlerOptions {
+  input: string
+  outDir: string
+  aliases: Alias[]
+}
 
 /**
  * Bundles the wumpy app and writes it to disk.
  */
-export async function bundle({
-  input,
-  commands,
-  outDir
-}: {
-  input: string
-  commands: Command[]
-  outDir: string
-}) {
-  const aliases = commands.map(c => ({
-    find: c.alias,
-    replacement: c.src
-  }))
-
+export async function bundle({ input, outDir, aliases }: BundlerOptions) {
   const bundle = await rollup({
     input,
     plugins: [

@@ -36,6 +36,12 @@ export function run(message) {
 }
 ```
 
+A Discord bot token is also required in order for your bot to authenticate with Discord. Add a `.env` file to the root of your project and populate it with the following, replacing `placeholder_token` with your own token.
+
+```
+WUMPY_BOT_TOKEN=placeholder_token
+```
+
 Build your app by running `npm run build`. This will build your app to the `out` directory.
 
 You can then run your bot as you would any other node program. Run the following in your terminal:

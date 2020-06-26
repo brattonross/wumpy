@@ -4,6 +4,10 @@ Wumpy is a minimal framework built on top of [discord.js](https://github.com/dis
 
 Inspired by the Next.js and Nuxt.js frameworks, wumpy uses a convention over configuration approach.
 
+### Status
+
+Please note that this project is still a work in progress, and the public api is likely to change a lot.
+
 ## Getting Started
 
 Install `wumpy` in your project:
